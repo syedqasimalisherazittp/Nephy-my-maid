@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#17121f">
+<meta name="description" content="Nephy — your shy elf maid companion">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icons/icon-192.png">
+<title>Nephy AI</title>
+<style>
+:root{--bg:#100d16;--panel:#1b1623;--panel2:#241d2d;--gold:#d8b879;--muted:#b8aebe;--text:#f8f1fa;--line:#40344b;--pink:#c88fae}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#33233b 0,#100d16 58%);color:var(--text);font:15px system-ui,-apple-system,Segoe UI,sans-serif;min-height:100dvh}
+.app{max-width:760px;margin:auto;min-height:100dvh;display:flex;flex-direction:column;padding:env(safe-area-inset-top) 12px env(safe-area-inset-bottom)}
+header{display:flex;align-items:center;gap:12px;padding:14px 4px;border-bottom:1px solid var(--line)}
+.avatar{width:46px;height:46px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(145deg,#60405d,#241b32);border:1px solid var(--gold);font-size:25px}
+.brand{flex:1}.brand b{display:block;font-size:18px;letter-spacing:.4px}.brand small{color:var(--muted)}.settings{background:var(--panel2);color:var(--gold);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.scene{margin:14px 0 8px;padding:14px;border:1px solid #58445b;border-radius:16px;background:linear-gradient(135deg,#2a1d30dd,#191420ee);text-align:center}
+.scene .castle{font-size:26px}.scene b{display:block;color:var(--gold);margin:4px}.scene p{margin:3px 0;color:#d8cbdc;font-size:13px;line-height:1.45}
+#chat{flex:1;overflow:auto;padding:10px 2px 18px;display:flex;flex-direction:column;gap:12px;min-height:220px}
+.msg{max-width:88%;padding:12px 14px;border-radius:16px;line-height:1.55;white-space:pre-wrap;overflow-wrap:anywhere}
+.nephy{align-self:flex-start;background:#241d2d;border:1px solid #4b3a53;border-bottom-left-radius:4px}
+.user{align-self:flex-end;background:#49344b;border:1px solid #79546e;border-bottom-right-radius:4px}
+.msg .who{font-size:11px;color:var(--gold);font-weight:700;display:block;margin-bottom:4px;letter-spacing:.5px}
+.typing{color:var(--muted);font-style:italic;padding:4px 10px}
+.composer{position:sticky;bottom:0;background:linear-gradient(transparent,#100d16 18%);padding:12px 0 calc(10px + env(safe-area-inset-bottom));}
+.entry{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:7px}
+textarea{flex:1;resize:none;max-height:120px;min-height:42px;background:transparent;color:var(--text);border:0;outline:0;padding:10px;font:inherit}
+.send{border:0;border-radius:13px;background:var(--gold);color:#211827;font-weight:800;padding:0 17px}
+.tools{display:flex;gap:8px;margin-top:8px;justify-content:space-between;color:var(--muted);font-size:12px}.tools button{background:none;color:var(--muted);border:0;padding:6px}
+.overlay{position:fixed;inset:0;background:#000a;display:none;align-items:flex-end;justify-content:center;padding:12px;z-index:5}
+.modal{width:min(100%,600px);background:#1b1623;border:1px solid var(--line);border-radius:20px;padding:18px;max-height:88dvh;overflow:auto}
+.modal h2{margin:0 0 12px;color:var(--gold)}label{display:block;margin:12px 0 6px;color:#e5d8e8;font-size:13px}
+input,select{width:100%;padding:12px;border-radius:11px;border:1px solid var(--line);background:#100d16;color:white;font:inherit}
+.modal p{color:var(--muted);font-size:13px;line-height:1.5}.actions{display:flex;gap:8px;margin-top:16px}.actions button{flex:1;padding:12px;border-radius:12px;border:1px solid var(--line);background:var(--panel2);color:white}.actions .save{background:var(--gold);color:#211827;font-weight:800}
+.disclaimer{text-align:center;color:#887e91;font-size:10px;padding:2px 0 8px}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+  <div class="avatar">🧝🏻‍♀️</div>
+  <div class="brand"><b>Nephy AI</b><small>your shy elf maid · adult fictional character</small></div>
+  <button class="settings" id="openSettings">⚙</button>
+</header>
+<section class="scene">
+  <div class="castle">🏰 🕯️</div>
+  <b>The Royal Throne Room</b>
+  <p>Rain taps against the tall castle windows. Nephy kneels respectfully before your throne, nervously clasping her hands.</p>
+</section>
+<main id="chat" aria-live="polite">
+  <div class="msg nephy"><span class="who">NEPHY</span><i>*She slowly raises her eyes toward you, then quickly looks down again. Her fingers fidget with the edge of her apron.*</i><br><br>“M-Master… may I ask you something? I-I’m afraid I may have made another little mistake…”</div>
+</main>
+<div class="composer">
+  <div class="entry"><textarea id="input" rows="1" placeholder="Talk to Nephy…"></textarea><button class="send" id="send">➤</button></div>
+  <div class="tools"><span id="status">Demo mode · add your OpenRouter API key in settings</span><button id="clear">Clear chat</button></div>
+</div>
+<div class="disclaimer">Fictional roleplay · Nephy is an adult character (21+) · text only</div>
+</div>
+<div class="overlay" id="overlay">
+ <section class="modal">
+  <h2>Nephy settings</h2>
+  <label for="provider">AI provider</label>
+  <select id="provider"><option value="openrouter">OpenRouter</option></select>
+  <label for="apiKey">OpenRouter API key</label>
+  <input id="apiKey" type="password" placeholder="Paste your API key">
+  <label for="model">Model</label>
+  <input id="model" value="openrouter/free" placeholder="openrouter/free">
+  <p>Your key is saved only in this browser on this device. Never share your key or publish it in code. The default model openrouter/free routes to an available free model; free models have usage limits and availability can change. Demo mode works without a key.</p>
+  <div class="actions"><button id="closeSettings">Cancel</button><button class="save" id="saveSettings">Save settings</button></div>
+ </section>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
